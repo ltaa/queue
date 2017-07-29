@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"regexp"
-	"log"
 )
 
 var regMatcher *regexp.Regexp
@@ -13,7 +12,6 @@ func init() {
 	regMatcher, err = regexp.Compile(regexpString)
 
 	if err != nil {
-		log.Print(err)
 		panic(err)
 		return
 	}

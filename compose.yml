@@ -1,7 +1,7 @@
-version: "2.1"
+version: "2.2"
 services:
   rabbit:
-    image: "rabbitmq:3-management"
+    image: "rabbit"
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -11,8 +11,13 @@ services:
     ports:
       - "5432:5432"
     restart: always
-#  nginx-library:
-#    image: nginx_router
-#    ports:
-#      - 4000:80
-#    restart: always
+  queue:
+    depends_on:
+      queue-db:
+        condition: "service_healthy"
+      rabbit:
+        condition: "service_healthy"
+    image: "queue"
+    stdin_open: true
+    tty: true
+    restart: always

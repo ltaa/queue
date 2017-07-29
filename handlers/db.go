@@ -3,19 +3,9 @@ package handlers
 import (
 	"database/sql"
 	_ "github.com/lib/pq"
-	"log"
 )
 
-var db *sql.DB
-func init() {
-	var err error
-	db, err = sql.Open("postgres", "postgres://postgres:postgres@localhost:5432/queue?sslmode=disable")
 
-	if err != nil {
-		log.Print(err)
-		panic(err)
-	}
-}
 
 
 
@@ -28,7 +18,6 @@ func insertToken(j *OutMsgJson, tx *sql.Tx) (int, error) {
 		tokenString := `insert into token(access_token) VALUES($1) RETURNING token_id`
 		err = tx.QueryRow(tokenString, j.AccessToken).Scan(&tokenId)
 		if err != nil {
-			log.Print(err)
 			return 0, err
 		}
 
@@ -50,7 +39,6 @@ func insertEvent(j *OutMsgJson, tx *sql.Tx) (int, error) {
 		eventString := `insert into event(event_code) VALUES($1) RETURNING event_id`
 		err = tx.QueryRow(eventString, j.EventCode).Scan(&eventId)
 		if err != nil {
-			log.Print(err)
 			return 0, err
 		}
 
@@ -71,7 +59,6 @@ func insertStream(j *OutMsgJson, tx *sql.Tx) (int, error) {
 		streamString := `insert into stream(stream_type) VALUES($1) RETURNING stream_id`
 		err = tx.QueryRow(streamString, j.StreamType).Scan(&streamId)
 		if err != nil {
-			log.Print(err)
 			return 0, err
 		}
 
@@ -85,7 +72,7 @@ func insertStream(j *OutMsgJson, tx *sql.Tx) (int, error) {
 
 func InsertMessage(j *OutMsgJson, b []byte) error {
 
-	tx, err := db.Begin()
+	tx, err := cfg.db.Begin()
 	defer tx.Rollback()
 	tokenId, err := insertToken(j, tx)
 
@@ -107,7 +94,6 @@ func InsertMessage(j *OutMsgJson, b []byte) error {
 	msgString := `insert into msg(token_id, event_id, stream_id, to_, data) VALUES($1, $2, $3, $4, $5) RETURNING msg_id`
 	err = tx.QueryRow(msgString, tokenId, eventId, streamId, j.To, b).Scan(&msgId)
 	if err != nil {
-		log.Print(err)
 		return err
 	}
 

@@ -23,6 +23,8 @@ type jsOutStruct struct {
 
 
 func main() {
+	//"access_token": "0d10566b-7e7f-4c17-b2ea-f0e42a4df3c0",
+	//"event_code": "ispp",
 	outString := `{
   "access_token": "0d10566b-7e7f-4c17-b2ea-f0e42a4df3c0",
   "event_code": "ispp",
