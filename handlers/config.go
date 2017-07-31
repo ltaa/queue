@@ -5,6 +5,7 @@ import (
 	"log"
 	"github.com/streadway/amqp"
 	"log/syslog"
+	"runtime"
 )
 
 var db *sql.DB
@@ -27,6 +28,7 @@ type Config struct {
 	amqpChan *amqp.Channel
 
 	logger *log.Logger
+	GoroutinesNum int
 
 }
 
@@ -37,6 +39,7 @@ func NewConfig() *Config {
 		AmqpUrl: defaultAmqpUrl,
 		AmqpChannel: defaultAmqpChannel,
 		DbUrl: defaultDbSource,
+		GoroutinesNum: runtime.NumCPU(),
 
 	}
 
@@ -70,6 +73,10 @@ func (c *Config) Init() {
 		panic(err)
 	}
 	cfg.logger = logger
+
+	if cfg.GoroutinesNum <= 0 {
+		cfg.GoroutinesNum = 1
+	}
 
 
 	err = amqpInit(cfg.AmqpUrl, cfg.AmqpChannel)

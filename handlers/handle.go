@@ -35,9 +35,8 @@ func Loop() {
 
 	cfg.logger.Print("init done:")
 
-	waitchan := make(chan bool)
 
-	go func() {
+	foo := func() {
 		for d := range cfg.msgs {
 			err := jobHandling(&d)
 			if err != nil {
@@ -45,10 +44,15 @@ func Loop() {
 				continue
 			}
 		}
-	} ()
+	}
 
+	for i := 0; i < cfg.GoroutinesNum - 1; i++ {
+		go foo()
+	}
 
-	<- waitchan
+	foo()
+
+	
 }
 
 
