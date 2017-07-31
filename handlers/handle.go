@@ -35,20 +35,17 @@ func Loop() {
 
 	cfg.logger.Print("init done:")
 
-	waitchan := make(chan bool)
 
-	go func() {
-		for d := range cfg.msgs {
-			err := jobHandling(&d)
-			if err != nil {
-				cfg.logger.Print(err)
-				continue
-			}
+
+	for d := range cfg.msgs {
+		err := jobHandling(&d)
+		if err != nil {
+			cfg.logger.Print(err)
+			continue
 		}
-	} ()
+	}
 
 
-	<- waitchan
 }
 
 
